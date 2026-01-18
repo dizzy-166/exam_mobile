@@ -9,8 +9,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.exam_mobile.presentation.screen.LoginScreen
 import com.example.exam_mobile.presentation.screen.MovieDetailsScreen
-import com.example.exam_mobile.presentation.screen.MovieFormScreen
 import com.example.exam_mobile.presentation.screen.MoviesListScreen
+import com.example.exam_mobile.presentation.screen.movie_form.MovieFormScreen
 import com.example.exam_mobile.presentation.viewmodel.MoviesListViewModel
 
 @Composable
@@ -18,7 +18,7 @@ fun RootNavGraph() {
     val navController = rememberNavController()
 
     // Shared ViewModel для списка фильмов
-    val moviesListViewModel: MoviesListViewModel = hiltViewModel()
+    val moviesListViewModel = hiltViewModel<MoviesListViewModel>()
 
     NavHost(navController = navController, startDestination = Routes.Login.route) {
 
@@ -42,13 +42,16 @@ fun RootNavGraph() {
         // Детали фильма
         composable(
             Routes.MovieDetails.route,
-            arguments = listOf(navArgument("id") { type = NavType.StringType })
+            arguments = listOf(navArgument("movieId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val movieId = backStackEntry.arguments?.getString("id") ?: return@composable
+            val movieId = backStackEntry.arguments?.getString("movieId") ?: ""
             MovieDetailsScreen(
-                movieId = movieId,
                 navController = navController,
-                moviesListViewModel = moviesListViewModel // ✅ исправлено
+                movieId = movieId,
+                onMovieDeleted = {
+                    // Обновляем список после удаления
+                    moviesListViewModel.loadMovies()
+                }
             )
         }
 
@@ -56,20 +59,26 @@ fun RootNavGraph() {
         composable(Routes.CreateMovie.route) {
             MovieFormScreen(
                 navController = navController,
-                moviesListViewModel = moviesListViewModel // ✅ передаём shared
+                onMovieSaved = {
+                    // Обновляем список после создания
+                    moviesListViewModel.loadMovies()
+                }
             )
         }
 
         // Редактирование фильма
         composable(
             Routes.EditMovie.route,
-            arguments = listOf(navArgument("id") { type = NavType.StringType })
+            arguments = listOf(navArgument("movieId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val movieId = backStackEntry.arguments?.getString("id") ?: return@composable
+            val movieId = backStackEntry.arguments?.getString("movieId") ?: ""
             MovieFormScreen(
                 navController = navController,
                 movieId = movieId,
-                moviesListViewModel = moviesListViewModel // ✅ передаём shared
+                onMovieSaved = {
+                    // Обновляем список после редактирования
+                    moviesListViewModel.loadMovies()
+                }
             )
         }
     }

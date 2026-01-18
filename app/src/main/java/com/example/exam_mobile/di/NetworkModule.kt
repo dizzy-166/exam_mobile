@@ -55,7 +55,6 @@ object NetworkModule {
         return retrofit.create(MoviesApi::class.java)
     }
 
-    // ✅ Добавляем AuthApi
     @Provides
     @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi {

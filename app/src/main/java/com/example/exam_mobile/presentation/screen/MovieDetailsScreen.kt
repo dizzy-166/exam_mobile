@@ -10,14 +10,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.exam_mobile.presentation.navigation.Routes
 import com.example.exam_mobile.presentation.viewmodel.MovieDetailsViewModel
-import com.example.exam_mobile.presentation.viewmodel.MoviesListViewModel
 
 @Composable
 fun MovieDetailsScreen(
     movieId: String,
     navController: NavController,
-    movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel(),
-    moviesListViewModel: MoviesListViewModel// shared viewModel
+    onMovieDeleted: () -> Unit = {}, // Callback для обновления списка
+    movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel()
 ) {
     val state by movieDetailsViewModel.state.collectAsState()
 
@@ -78,15 +77,15 @@ fun MovieDetailsScreen(
                             onClick = {
                                 movieDetailsViewModel.deleteMovie(movieId) {
                                     navController.popBackStack()
-                                    moviesListViewModel.loadMovies() // 🔹 обновляем список
+                                    onMovieDeleted() // Вызываем callback для обновления списка
                                 }
                             }
                         ) {
                             Text("Удалить")
                         }
                     }
-                    }
                 }
             }
         }
     }
+}
