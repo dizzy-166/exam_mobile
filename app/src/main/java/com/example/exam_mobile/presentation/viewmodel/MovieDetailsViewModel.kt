@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// ViewModel для экрана деталей фильма
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     private val getMovieByIdUseCase: GetMovieByIdUseCase,
@@ -20,6 +21,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val _state = MutableStateFlow(MovieDetailsState(isLoading = true))
     val state: StateFlow<MovieDetailsState> = _state
 
+    // Загрузка фильма по ID
     fun loadMovie(id: String) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
@@ -35,12 +37,13 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
+    // Удаление фильма
     fun deleteMovie(id: String, onDeleted: () -> Unit) {
         viewModelScope.launch {
             try {
                 deleteMovieUseCase(id)
                 _state.value = _state.value.copy(deleteSuccess = true)
-                onDeleted()
+                onDeleted() // Коллбэк после успешного удаления
             } catch (e: Exception) {
                 _state.value = _state.value.copy(error = e.message)
             }

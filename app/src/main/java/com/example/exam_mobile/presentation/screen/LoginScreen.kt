@@ -13,12 +13,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.exam_mobile.presentation.viewmodel.LoginViewModel
 
+// Экран авторизации пользователя
 @Composable
 fun LoginScreen(
-    onSuccess: () -> Unit,
+    onSuccess: () -> Unit, // Коллбэк при успешном входе
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    // Collect state from ViewModel (StateFlow)
+    // Собираем состояние из ViewModel
     val state by viewModel.state.collectAsState()
 
     Column(
@@ -27,7 +28,7 @@ fun LoginScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        // Email
+        // Поле для email
         OutlinedTextField(
             value = state.email,
             onValueChange = { viewModel.onEmailChange(it) },
@@ -40,7 +41,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Password
+        // Поле для пароля (скрытый ввод)
         OutlinedTextField(
             value = state.password,
             onValueChange = { viewModel.onPasswordChange(it) },
@@ -54,13 +55,14 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Login Button
+        // Кнопка входа
         Button(
             onClick = { viewModel.login(onSuccess) },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !state.isLoading
+            enabled = !state.isLoading // Блокируем кнопку во время загрузки
         ) {
             if (state.isLoading) {
+                // Индикатор загрузки
                 CircularProgressIndicator(
                     modifier = Modifier.size(20.dp),
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -71,7 +73,7 @@ fun LoginScreen(
             }
         }
 
-        // Error message
+        // Отображение ошибки (если есть)
         state.error?.let { errorMsg ->
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = errorMsg, color = MaterialTheme.colorScheme.error)

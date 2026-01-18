@@ -11,16 +11,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.exam_mobile.presentation.viewmodel.MovieFormViewModel
 
+// Экран формы для создания/редактирования фильма
 @Composable
 fun MovieFormScreen(
     navController: NavController,
-    onMovieSaved: () -> Unit = {}, // Callback для обновления списка
-    movieId: String? = null,
+    onMovieSaved: () -> Unit = {}, // Коллбэк после сохранения фильма
+    movieId: String? = null, // ID фильма для редактирования (null для создания нового)
     movieFormViewModel: MovieFormViewModel = hiltViewModel()
 ) {
     val state by movieFormViewModel.state.collectAsState()
 
-    // Загружаем данные фильма, если передан movieId
+    // Загрузка данных фильма при передаче movieId (режим редактирования)
     LaunchedEffect(movieId) {
         movieId?.let { movieFormViewModel.loadMovie(it) }
     }
@@ -31,12 +32,14 @@ fun MovieFormScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        // Заголовок формы
         Text(
             text = if (movieId != null) "Редактирование фильма" else "Создание фильма",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        // Название
         OutlinedTextField(
             value = state.title,
             onValueChange = { movieFormViewModel.onFieldChange("title", it) },
@@ -44,6 +47,7 @@ fun MovieFormScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Описание
         OutlinedTextField(
             value = state.description,
             onValueChange = { movieFormViewModel.onFieldChange("description", it) },
@@ -51,6 +55,7 @@ fun MovieFormScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Жанр
         OutlinedTextField(
             value = state.genre,
             onValueChange = { movieFormViewModel.onFieldChange("genre", it) },
@@ -58,6 +63,7 @@ fun MovieFormScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Страна
         OutlinedTextField(
             value = state.country,
             onValueChange = { movieFormViewModel.onFieldChange("country", it) },
@@ -65,6 +71,7 @@ fun MovieFormScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Режиссер
         OutlinedTextField(
             value = state.director,
             onValueChange = { movieFormViewModel.onFieldChange("director", it) },
@@ -72,6 +79,7 @@ fun MovieFormScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Рейтинг КиноПоиска
         OutlinedTextField(
             value = state.ratingKinoPoisk,
             onValueChange = { movieFormViewModel.onFieldChange("ratingKinoPoisk", it) },
@@ -79,6 +87,7 @@ fun MovieFormScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Рейтинг IMDb
         OutlinedTextField(
             value = state.ratingIMDB,
             onValueChange = { movieFormViewModel.onFieldChange("ratingIMDB", it) },
@@ -88,7 +97,7 @@ fun MovieFormScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Показываем ошибку, если есть
+        // Отображение ошибки (если есть)
         state.error?.let { error ->
             Text(
                 text = "Ошибка: $error",
@@ -97,11 +106,12 @@ fun MovieFormScreen(
             )
         }
 
+        // Кнопка сохранения
         Button(
             onClick = {
                 movieFormViewModel.submit {
-                    navController.popBackStack()
-                    onMovieSaved() // Вызываем callback для обновления списка
+                    navController.popBackStack() // Возвращаемся назад
+                    onMovieSaved() // Вызываем коллбэк для обновления списка
                 }
             },
             enabled = !state.isLoading,
@@ -114,6 +124,7 @@ fun MovieFormScreen(
             }
         }
 
+        // Кнопка отмены
         OutlinedButton(
             onClick = { navController.popBackStack() },
             modifier = Modifier

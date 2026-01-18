@@ -9,14 +9,16 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+// Dagger Hilt модуль для зависимостей локального хранилища
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(SingletonComponent::class) // Зависимости живут всё время жизни приложения
 object LocalModule {
 
+    // Предоставляет экземпляр TokenDataStore
     @Provides
     @Singleton
     fun provideTokenDataStore(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context // Контекст приложения из Hilt
     ): TokenDataStore {
         return TokenDataStore(context)
     }

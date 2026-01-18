@@ -1,5 +1,6 @@
 package com.example.exam_mobile.data.dto
 
+// DTO для ответа
 data class MoviesResponseDto(
     val page: Int,
     val perPage: Int,

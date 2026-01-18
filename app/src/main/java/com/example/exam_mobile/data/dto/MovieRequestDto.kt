@@ -1,5 +1,6 @@
 package com.example.exam_mobile.data.dto
 
+// DTO для создания или обновления фильма (запрос к серверу)
 data class MovieRequest(
     val title: String,
     val description: String,

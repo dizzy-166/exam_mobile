@@ -10,28 +10,38 @@ import androidx.navigation.navArgument
 import com.example.exam_mobile.presentation.screen.LoginScreen
 import com.example.exam_mobile.presentation.screen.MovieDetailsScreen
 import com.example.exam_mobile.presentation.screen.MoviesListScreen
+import com.example.exam_mobile.presentation.screen.SplashScreen
 import com.example.exam_mobile.presentation.screen.movie_form.MovieFormScreen
 import com.example.exam_mobile.presentation.viewmodel.MoviesListViewModel
 
+// Корневой граф навигации приложения
 @Composable
 fun RootNavGraph() {
     val navController = rememberNavController()
 
-    // Shared ViewModel для списка фильмов
+    // Shared ViewModel для списка фильмов (разделяется между несколькими экранами)
     val moviesListViewModel = hiltViewModel<MoviesListViewModel>()
 
-    NavHost(navController = navController, startDestination = Routes.Login.route) {
+    // Начальный экран - SplashScreen
+    NavHost(navController = navController, startDestination = Routes.Splash.route) {
 
-        // Login
+        // Splash экран (загрузочный экран)
+        composable(Routes.Splash.route) {
+            SplashScreen(navController = navController)
+        }
+
+        // Экран входа
         composable(Routes.Login.route) {
             LoginScreen(onSuccess = {
+                // После успешного входа переходим к списку фильмов
                 navController.navigate(Routes.MoviesList.route) {
-                    popUpTo(Routes.Login.route) { inclusive = true }
+                    // Удаляем Splash и Login из стека навигации
+                    popUpTo(Routes.Splash.route) { inclusive = true }
                 }
             })
         }
 
-        // Список фильмов
+        // Список фильмов (главный экран)
         composable(Routes.MoviesList.route) {
             MoviesListScreen(
                 navController = navController,
@@ -39,7 +49,7 @@ fun RootNavGraph() {
             )
         }
 
-        // Детали фильма
+        // Детали фильма (с аргументом movieId)
         composable(
             Routes.MovieDetails.route,
             arguments = listOf(navArgument("movieId") { type = NavType.StringType })
@@ -49,7 +59,7 @@ fun RootNavGraph() {
                 navController = navController,
                 movieId = movieId,
                 onMovieDeleted = {
-                    // Обновляем список после удаления
+                    // Обновляем список фильмов после удаления
                     moviesListViewModel.loadMovies()
                 }
             )
@@ -60,13 +70,13 @@ fun RootNavGraph() {
             MovieFormScreen(
                 navController = navController,
                 onMovieSaved = {
-                    // Обновляем список после создания
+                    // Обновляем список фильмов после создания
                     moviesListViewModel.loadMovies()
                 }
             )
         }
 
-        // Редактирование фильма
+        // Редактирование фильма (с аргументом movieId)
         composable(
             Routes.EditMovie.route,
             arguments = listOf(navArgument("movieId") { type = NavType.StringType })
@@ -76,7 +86,7 @@ fun RootNavGraph() {
                 navController = navController,
                 movieId = movieId,
                 onMovieSaved = {
-                    // Обновляем список после редактирования
+                    // Обновляем список фильмов после редактирования
                     moviesListViewModel.loadMovies()
                 }
             )

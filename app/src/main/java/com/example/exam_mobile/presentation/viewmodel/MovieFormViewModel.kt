@@ -1,6 +1,5 @@
 package com.example.exam_mobile.presentation.viewmodel
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.exam_mobile.data.dto.MovieRequest
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// ViewModel для формы создания/редактирования фильма
 @HiltViewModel
 class MovieFormViewModel @Inject constructor(
     private val createMovieUseCase: CreateMovieUseCase,
@@ -25,6 +25,7 @@ class MovieFormViewModel @Inject constructor(
     private val _state = MutableStateFlow(MovieFormState())
     val state: StateFlow<MovieFormState> = _state
 
+    // Загрузка данных фильма для редактирования
     fun loadMovie(id: String) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
@@ -50,6 +51,7 @@ class MovieFormViewModel @Inject constructor(
         }
     }
 
+    // Обновление значения конкретного поля формы
     fun onFieldChange(field: String, value: String) {
         _state.value = when (field) {
             "title" -> _state.value.copy(title = value)
@@ -63,6 +65,7 @@ class MovieFormViewModel @Inject constructor(
         }
     }
 
+    // Отправка формы (создание или обновление фильма)
     fun submit(onSuccess: () -> Unit) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
@@ -77,6 +80,7 @@ class MovieFormViewModel @Inject constructor(
                     ratingIMDB = _state.value.ratingIMDB.toDoubleOrNull() ?: 0.0
                 )
 
+                // Определяем создание или обновление по наличию movieId
                 if (_state.value.movieId == null) {
                     createMovieUseCase(request)
                 } else {
@@ -84,7 +88,7 @@ class MovieFormViewModel @Inject constructor(
                 }
 
                 _state.value = _state.value.copy(isLoading = false, success = true)
-                onSuccess()
+                onSuccess() // Коллбэк после успешного сохранения
             } catch (e: Exception) {
                 _state.value = _state.value.copy(isLoading = false, error = e.message)
             }

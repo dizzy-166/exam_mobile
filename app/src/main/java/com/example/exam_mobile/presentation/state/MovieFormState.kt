@@ -2,6 +2,7 @@ package com.example.exam_mobile.presentation.state
 
 import com.example.exam_mobile.domain.model.Movie
 
+// Состояние формы создания/редактирования фильма
 data class MovieFormState(
     val title: String = "",
     val description: String = "",
@@ -10,11 +11,12 @@ data class MovieFormState(
     val genre: String = "",
     val country: String = "",
     val director: String = "",
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val success: Boolean = false,
-    val movieId: String? = null // null = создание, не null = редактирование
+    val isLoading: Boolean = false, // Флаг загрузки
+    val error: String? = null, // Сообщение об ошибке
+    val success: Boolean = false, // Флаг успешного сохранения
+    val movieId: String? = null // ID фильма (null - создание, не null - редактирование)
 ) {
+    // Преобразование состояния в Map для отправки на сервер
     fun toMap() = mapOf(
         "title" to title,
         "description" to description,

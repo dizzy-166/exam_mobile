@@ -10,16 +10,19 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+// Dagger Hilt модуль для репозиториев (использует абстрактный класс и @Binds)
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
+    // Связывает реализацию MoviesRepositoryImpl с интерфейсом MoviesRepository
     @Binds
     @Singleton
     abstract fun bindMoviesRepository(
         impl: MoviesRepositoryImpl
     ): MoviesRepository
 
+    // Связывает реализацию AuthRepositoryImpl с интерфейсом AuthRepository
     @Binds
     @Singleton
     abstract fun bindAuthRepository(

@@ -1,5 +1,6 @@
 package com.example.exam_mobile.data.dto
 
+// DTO для данных о фильме
 data class MovieDto(
     val id: String,
     val title: String?,

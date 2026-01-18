@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// ViewModel для экрана списка фильмов
 @HiltViewModel
 class MoviesListViewModel @Inject constructor(
     private val getMoviesUseCase: GetMoviesUseCase
@@ -19,10 +20,12 @@ class MoviesListViewModel @Inject constructor(
     private val _state = MutableStateFlow(MoviesListState(isLoading = true))
     val state: StateFlow<MoviesListState> = _state
 
+    // Автоматическая загрузка фильмов при создании ViewModel
     init {
         loadMovies()
     }
 
+    // Загрузка списка фильмов
     fun loadMovies() {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)

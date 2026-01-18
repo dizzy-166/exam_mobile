@@ -7,12 +7,15 @@ import com.example.exam_mobile.domain.model.User
 import com.example.exam_mobile.domain.repository.AuthRepository
 import javax.inject.Inject
 
+// Реализация репозитория для аутентификации
 class AuthRepositoryImpl @Inject constructor(
     private val api: AuthApi,
     private val tokenDataStore: TokenDataStore
 ) : AuthRepository {
 
+    // Авторизация пользователя
     override suspend fun login(email: String, password: String): User {
+        // Отправляем запрос на сервер
         val response = api.login(
             LoginRequestDto(
                 identity = email,
@@ -20,8 +23,10 @@ class AuthRepositoryImpl @Inject constructor(
             )
         )
 
+        // Сохраняем полученный токен в DataStore
         tokenDataStore.saveToken(response.token)
 
+        // Возвращаем доменную модель пользователя
         return User(
             id = response.record.id,
             email = response.record.email,
@@ -29,6 +34,7 @@ class AuthRepositoryImpl @Inject constructor(
         )
     }
 
+    // Выход из аккаунта - удаление токена
     override suspend fun logout() {
         tokenDataStore.clearToken()
     }

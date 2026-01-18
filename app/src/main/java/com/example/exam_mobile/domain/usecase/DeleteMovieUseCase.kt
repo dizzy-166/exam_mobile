@@ -3,6 +3,7 @@ package com.example.exam_mobile.domain.usecase
 import com.example.exam_mobile.domain.repository.MoviesRepository
 import javax.inject.Inject
 
+// Use case для удаления фильма
 class DeleteMovieUseCase @Inject constructor(
     private val repository: MoviesRepository
 ) {

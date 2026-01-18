@@ -5,6 +5,7 @@ import com.example.exam_mobile.domain.model.Movie
 import com.example.exam_mobile.domain.repository.MoviesRepository
 import javax.inject.Inject
 
+// Use case для авторизации пользователя
 class UpdateMovieUseCase @Inject constructor(
     private val repository: MoviesRepository
 ) {
