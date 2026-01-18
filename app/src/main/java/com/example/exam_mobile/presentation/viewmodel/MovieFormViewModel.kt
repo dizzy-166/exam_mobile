@@ -3,7 +3,6 @@ package com.example.exam_mobile.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.exam_mobile.data.dto.MovieRequest
-import com.example.exam_mobile.domain.model.Movie
 import com.example.exam_mobile.domain.usecase.CreateMovieUseCase
 import com.example.exam_mobile.domain.usecase.GetMovieByIdUseCase
 import com.example.exam_mobile.domain.usecase.UpdateMovieUseCase

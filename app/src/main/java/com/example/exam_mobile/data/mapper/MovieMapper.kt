@@ -20,17 +20,3 @@ fun MovieDto.toDomain(): Movie {
         updated = updated
     )
 }
-
-// Преобразование Movie (доменный слой) в Map<String, Any?> для отправки на сервер
-// Используется при создании или обновлении фильма
-fun Movie.toRequestMap(): Map<String, Any?> {
-    return mapOf(
-        "title" to title,
-        "description" to description,
-        "ratingKinoPoisk" to ratingKinoPoisk,
-        "ratingIMDB" to ratingIMDB,
-        "genre" to genre,
-        "country" to country,
-        "director" to director
-    )
-}

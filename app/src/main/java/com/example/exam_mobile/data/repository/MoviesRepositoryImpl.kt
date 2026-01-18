@@ -2,7 +2,6 @@ package com.example.exam_mobile.data.repository
 
 import com.example.exam_mobile.data.dto.MovieRequest
 import com.example.exam_mobile.data.mapper.toDomain
-import com.example.exam_mobile.data.mapper.toRequestMap
 import com.example.exam_mobile.data.remote.MoviesApi
 import com.example.exam_mobile.domain.model.Movie
 import com.example.exam_mobile.domain.repository.MoviesRepository

@@ -15,15 +15,4 @@ data class MovieFormState(
     val error: String? = null, // Сообщение об ошибке
     val success: Boolean = false, // Флаг успешного сохранения
     val movieId: String? = null // ID фильма (null - создание, не null - редактирование)
-) {
-    // Преобразование состояния в Map для отправки на сервер
-    fun toMap() = mapOf(
-        "title" to title,
-        "description" to description,
-        "ratingKinoPoisk" to ratingKinoPoisk.toDoubleOrNull(),
-        "ratingIMDB" to ratingIMDB.toDoubleOrNull(),
-        "genre" to genre,
-        "country" to country,
-        "director" to director
-    )
-}
+)

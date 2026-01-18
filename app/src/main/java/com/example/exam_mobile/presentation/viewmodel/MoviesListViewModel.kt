@@ -2,7 +2,6 @@ package com.example.exam_mobile.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.exam_mobile.domain.usecase.DeleteMovieUseCase
 import com.example.exam_mobile.domain.usecase.GetMoviesUseCase
 import com.example.exam_mobile.presentation.state.MoviesListState
 import dagger.hilt.android.lifecycle.HiltViewModel
