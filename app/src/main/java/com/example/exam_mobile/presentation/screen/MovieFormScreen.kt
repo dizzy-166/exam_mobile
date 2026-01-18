@@ -15,9 +15,14 @@ fun MovieFormScreen(
     navController: NavController,
     movieId: String? = null,
     viewModel: MovieFormViewModel = hiltViewModel(),
-    moviesListViewModel: MoviesListViewModel? = null // shared для обновления списка
+    moviesListViewModel: MoviesListViewModel // ✅ теперь обязательно передаём
 ) {
     val state by viewModel.state.collectAsState()
+
+    // Загружаем фильм, если редактируем
+    LaunchedEffect(movieId) {
+        movieId?.let { viewModel.loadMovie(it) }
+    }
 
     Column(
         modifier = Modifier
@@ -25,7 +30,6 @@ fun MovieFormScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.Top
     ) {
-        // Название фильма
         OutlinedTextField(
             value = state.title,
             onValueChange = { viewModel.onFieldChange("title", it) },
@@ -35,7 +39,6 @@ fun MovieFormScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Жанр
         OutlinedTextField(
             value = state.genre,
             onValueChange = { viewModel.onFieldChange("genre", it) },
@@ -45,7 +48,6 @@ fun MovieFormScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Описание
         OutlinedTextField(
             value = state.description,
             onValueChange = { viewModel.onFieldChange("description", it) },
@@ -58,7 +60,6 @@ fun MovieFormScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Страна
         OutlinedTextField(
             value = state.country,
             onValueChange = { viewModel.onFieldChange("country", it) },
@@ -68,7 +69,6 @@ fun MovieFormScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Режиссер
         OutlinedTextField(
             value = state.director,
             onValueChange = { viewModel.onFieldChange("director", it) },
@@ -78,7 +78,6 @@ fun MovieFormScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Рейтинг КиноПоиск
         OutlinedTextField(
             value = state.ratingKinoPoisk?.toString() ?: "",
             onValueChange = { viewModel.onFieldChange("ratingKinoPoisk", it) },
@@ -89,7 +88,6 @@ fun MovieFormScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Рейтинг IMDB
         OutlinedTextField(
             value = state.ratingIMDB?.toString() ?: "",
             onValueChange = { viewModel.onFieldChange("ratingIMDB", it) },
@@ -100,21 +98,19 @@ fun MovieFormScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Кнопка Создать/Сохранить
         Button(
             onClick = {
                 viewModel.submit {
-                    // обновляем список фильмов после создания/редактирования
-                    moviesListViewModel?.loadMovies()
+                    // ⚡️ Обновляем список фильмов через shared ViewModel
+                    moviesListViewModel.loadMovies()
                     navController.popBackStack()
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(if (movieId == null) "Создать" else "Сохранить")
+            Text(if (state.movieId == null) "Создать" else "Сохранить")
         }
 
-        // Ошибка
         state.error?.let { errorMessage ->
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
