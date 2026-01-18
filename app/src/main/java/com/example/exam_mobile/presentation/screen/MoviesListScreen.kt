@@ -17,49 +17,62 @@ import com.example.exam_mobile.presentation.viewmodel.MoviesListViewModel
 @Composable
 fun MoviesListScreen(
     navController: NavController,
-    viewModel: MoviesListViewModel = hiltViewModel()
+    viewModel: MoviesListViewModel
 ) {
     val state by viewModel.state.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (state.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        } else if (state.error != null) {
-            val errorMessage = state.error
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = errorMessage ?: "", color = MaterialTheme.colorScheme.error)
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = { viewModel.loadMovies() }) {
-                    Text("Повторить")
+    Column(modifier = Modifier.fillMaxSize()) {
+
+        // Список фильмов
+        Box(modifier = Modifier.weight(1f)) {
+            if (state.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            } else if (state.error != null) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = state.error ?: "", color = MaterialTheme.colorScheme.error)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = { viewModel.loadMovies() }) {
+                        Text("Повторить")
+                    }
                 }
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(state.movies) { movie ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                navController.navigate(Routes.MovieDetails.passId(movie.id))
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(state.movies) { movie ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    navController.navigate(Routes.MovieDetails.passId(movie.id))
+                                }
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(text = movie.title, style = MaterialTheme.typography.titleMedium)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(text = "Жанр: ${movie.genre}", style = MaterialTheme.typography.bodyMedium)
                             }
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(text = movie.title, style = MaterialTheme.typography.titleMedium)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(text = "Жанр: ${movie.genre}", style = MaterialTheme.typography.bodyMedium)
                         }
                     }
                 }
             }
+        }
+
+        // Кнопка "Создать фильм"
+        Button(
+            onClick = { navController.navigate(Routes.CreateMovie.route) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text("Создать фильм")
         }
     }
 }

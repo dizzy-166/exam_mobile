@@ -3,6 +3,7 @@ package com.example.exam_mobile.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.exam_mobile.data.dto.MovieRequest
 import com.example.exam_mobile.domain.model.Movie
 import com.example.exam_mobile.domain.usecase.CreateMovieUseCase
 import com.example.exam_mobile.domain.usecase.GetMovieByIdUseCase
@@ -66,39 +67,22 @@ class MovieFormViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
             try {
-                val movieMap = _state.value.toMap()
+                val request = MovieRequest(
+                    title = _state.value.title,
+                    description = _state.value.description,
+                    genre = _state.value.genre,
+                    country = _state.value.country,
+                    director = _state.value.director,
+                    ratingKinoPoisk = _state.value.ratingKinoPoisk.toDoubleOrNull() ?: 0.0,
+                    ratingIMDB = _state.value.ratingIMDB.toDoubleOrNull() ?: 0.0
+                )
+
                 if (_state.value.movieId == null) {
-                    createMovieUseCase(
-                        Movie(
-                            id = "",
-                            title = movieMap["title"] as String,
-                            description = movieMap["description"] as String,
-                            ratingKinoPoisk = movieMap["ratingKinoPoisk"] as? Double,
-                            ratingIMDB = movieMap["ratingIMDB"] as? Double,
-                            genre = movieMap["genre"] as String,
-                            country = movieMap["country"] as String,
-                            director = movieMap["director"] as String,
-                            created = "",
-                            updated = ""
-                        )
-                    )
+                    createMovieUseCase(request)
                 } else {
-                    updateMovieUseCase(
-                        _state.value.movieId!!,
-                        Movie(
-                            id = _state.value.movieId!!,
-                            title = movieMap["title"] as String,
-                            description = movieMap["description"] as String,
-                            ratingKinoPoisk = movieMap["ratingKinoPoisk"] as? Double,
-                            ratingIMDB = movieMap["ratingIMDB"] as? Double,
-                            genre = movieMap["genre"] as String,
-                            country = movieMap["country"] as String,
-                            director = movieMap["director"] as String,
-                            created = "",
-                            updated = ""
-                        )
-                    )
+                    updateMovieUseCase(_state.value.movieId!!, request)
                 }
+
                 _state.value = _state.value.copy(isLoading = false, success = true)
                 onSuccess()
             } catch (e: Exception) {

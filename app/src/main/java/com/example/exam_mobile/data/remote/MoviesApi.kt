@@ -1,6 +1,7 @@
 package com.example.exam_mobile.data.remote
 
 import com.example.exam_mobile.data.dto.MovieDto
+import com.example.exam_mobile.data.dto.MovieRequest
 import com.example.exam_mobile.data.dto.MoviesResponseDto
 import retrofit2.http.*
 interface MoviesApi {
@@ -15,18 +16,17 @@ interface MoviesApi {
 
     @POST("api/collections/movies/records")
     suspend fun createMovie(
-        @Body movie: Map<String, Any?>
+        @Body movie: MovieRequest
     ): MovieDto
 
     @PATCH("api/collections/movies/records/{id}")
     suspend fun updateMovie(
         @Path("id") id: String,
-        @Body movie: Map<String, Any?>
+        @Body movie: MovieRequest
     ): MovieDto
 
     @DELETE("api/collections/movies/records/{id}")
     suspend fun deleteMovie(
         @Path("id") id: String
     ): retrofit2.Response<Unit>
-
 }

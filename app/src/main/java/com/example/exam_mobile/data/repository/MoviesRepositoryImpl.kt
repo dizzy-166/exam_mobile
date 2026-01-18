@@ -1,5 +1,6 @@
 package com.example.exam_mobile.data.repository
 
+import com.example.exam_mobile.data.dto.MovieRequest
 import com.example.exam_mobile.data.mapper.toDomain
 import com.example.exam_mobile.data.mapper.toRequestMap
 import com.example.exam_mobile.data.remote.MoviesApi
@@ -19,12 +20,13 @@ class MoviesRepositoryImpl @Inject constructor(
         return api.getMovieById(id).toDomain()
     }
 
-    override suspend fun createMovie(movie: Movie): Movie {
-        return api.createMovie(movie.toRequestMap()).toDomain()
+    // Теперь принимаем MovieRequest
+    override suspend fun createMovie(request: MovieRequest): Movie {
+        return api.createMovie(request).toDomain()
     }
 
-    override suspend fun updateMovie(id: String, movie: Movie): Movie {
-        return api.updateMovie(id, movie.toRequestMap()).toDomain()
+    override suspend fun updateMovie(id: String, request: MovieRequest): Movie {
+        return api.updateMovie(id, request).toDomain()
     }
 
     override suspend fun deleteMovie(id: String) {
@@ -33,5 +35,4 @@ class MoviesRepositoryImpl @Inject constructor(
             throw Exception("Ошибка при удалении фильма: ${response.code()}")
         }
     }
-
 }
