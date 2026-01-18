@@ -2,6 +2,7 @@ package com.example.exam_mobile.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.exam_mobile.domain.usecase.DeleteMovieUseCase
 import com.example.exam_mobile.domain.usecase.GetMoviesUseCase
 import com.example.exam_mobile.presentation.state.MoviesListState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoviesListViewModel @Inject constructor(
-    private val getMoviesUseCase: GetMoviesUseCase
+    private val getMoviesUseCase: GetMoviesUseCase,
+    private val deleteMovieUseCase: DeleteMovieUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MoviesListState(isLoading = true))
@@ -36,6 +38,17 @@ class MoviesListViewModel @Inject constructor(
                     isLoading = false,
                     error = e.message ?: "Ошибка загрузки фильмов"
                 )
+            }
+        }
+    }
+
+    fun deleteMovie(id: String) {
+        viewModelScope.launch {
+            try {
+                deleteMovieUseCase(id)
+                loadMovies() // Перезагрузка списка после удаления
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(error = e.message ?: "Ошибка при удалении")
             }
         }
     }

@@ -28,6 +28,10 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteMovie(id: String) {
-        api.deleteMovie(id)
+        val response = api.deleteMovie(id)
+        if (!response.isSuccessful) {
+            throw Exception("Ошибка при удалении фильма: ${response.code()}")
+        }
     }
+
 }

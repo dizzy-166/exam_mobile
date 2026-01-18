@@ -27,5 +27,6 @@ interface MoviesApi {
     @DELETE("api/collections/movies/records/{id}")
     suspend fun deleteMovie(
         @Path("id") id: String
-    )
+    ): retrofit2.Response<Unit>
+
 }
