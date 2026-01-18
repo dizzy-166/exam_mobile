@@ -13,8 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoviesListViewModel @Inject constructor(
-    private val getMoviesUseCase: GetMoviesUseCase,
-    private val deleteMovieUseCase: DeleteMovieUseCase
+    private val getMoviesUseCase: GetMoviesUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MoviesListState(isLoading = true))
@@ -29,26 +28,12 @@ class MoviesListViewModel @Inject constructor(
             _state.value = _state.value.copy(isLoading = true, error = null)
             try {
                 val movies = getMoviesUseCase()
-                _state.value = _state.value.copy(
-                    movies = movies,
-                    isLoading = false
-                )
+                _state.value = _state.value.copy(movies = movies, isLoading = false)
             } catch (e: Exception) {
                 _state.value = _state.value.copy(
                     isLoading = false,
                     error = e.message ?: "Ошибка загрузки фильмов"
                 )
-            }
-        }
-    }
-
-    fun deleteMovie(id: String) {
-        viewModelScope.launch {
-            try {
-                deleteMovieUseCase(id)
-                loadMovies() // Перезагрузка списка после удаления
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(error = e.message ?: "Ошибка при удалении")
             }
         }
     }

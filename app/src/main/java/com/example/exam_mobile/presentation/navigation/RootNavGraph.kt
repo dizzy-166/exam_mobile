@@ -1,6 +1,7 @@
 package com.example.exam_mobile.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,11 +11,15 @@ import com.example.exam_mobile.presentation.screen.LoginScreen
 import com.example.exam_mobile.presentation.screen.MovieDetailsScreen
 import com.example.exam_mobile.presentation.screen.MovieFormScreen
 import com.example.exam_mobile.presentation.screen.MoviesListScreen
+import com.example.exam_mobile.presentation.viewmodel.MoviesListViewModel
 
 
 @Composable
 fun RootNavGraph() {
     val navController = rememberNavController()
+
+    // Shared MoviesListViewModel для списка фильмов
+    val moviesListViewModel: MoviesListViewModel = hiltViewModel()
 
     NavHost(navController = navController, startDestination = Routes.Login.route) {
 
@@ -27,7 +32,10 @@ fun RootNavGraph() {
         }
 
         composable(Routes.MoviesList.route) {
-            MoviesListScreen(navController = navController)
+            MoviesListScreen(
+                navController = navController,
+                viewModel = moviesListViewModel // передаем shared
+            )
         }
 
         composable(
@@ -35,7 +43,11 @@ fun RootNavGraph() {
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
             val movieId = backStackEntry.arguments?.getString("id") ?: return@composable
-            MovieDetailsScreen(movieId = movieId, navController = navController)
+            MovieDetailsScreen(
+                movieId = movieId,
+                navController = navController,
+                moviesListViewModel = moviesListViewModel // передаем shared
+            )
         }
 
         composable(Routes.CreateMovie.route) {

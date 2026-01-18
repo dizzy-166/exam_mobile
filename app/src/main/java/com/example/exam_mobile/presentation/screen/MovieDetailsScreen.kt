@@ -10,24 +10,25 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.exam_mobile.presentation.navigation.Routes
 import com.example.exam_mobile.presentation.viewmodel.MovieDetailsViewModel
+import com.example.exam_mobile.presentation.viewmodel.MoviesListViewModel
 
 @Composable
 fun MovieDetailsScreen(
     movieId: String,
     navController: NavController,
-    viewModel: MovieDetailsViewModel = hiltViewModel()
+    movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel(),
+    moviesListViewModel: MoviesListViewModel// shared viewModel
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by movieDetailsViewModel.state.collectAsState()
 
     LaunchedEffect(movieId) {
-        viewModel.loadMovie(movieId)
+        movieDetailsViewModel.loadMovie(movieId)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (state.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         } else if (state.error != null) {
-            val errorMessage = state.error
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -35,9 +36,9 @@ fun MovieDetailsScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = errorMessage ?: "", color = MaterialTheme.colorScheme.error)
+                Text(text = state.error ?: "", color = MaterialTheme.colorScheme.error)
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = { viewModel.loadMovie(movieId) }) {
+                Button(onClick = { movieDetailsViewModel.loadMovie(movieId) }) {
                     Text("Повторить")
                 }
             }
@@ -75,14 +76,17 @@ fun MovieDetailsScreen(
                         Button(
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                             onClick = {
-                                viewModel.deleteMovie(movie.id) { navController.popBackStack() }
+                                movieDetailsViewModel.deleteMovie(movieId) {
+                                    navController.popBackStack()
+                                    moviesListViewModel.loadMovies() // 🔹 обновляем список
+                                }
                             }
                         ) {
                             Text("Удалить")
                         }
                     }
+                    }
                 }
             }
         }
     }
-}
